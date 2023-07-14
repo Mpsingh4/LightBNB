@@ -5,13 +5,13 @@ DROP TABLE IF EXISTS reservations CASCADE;
 DROP TABLE IF EXISTS properties CASCADE;
 DROP TABLE IF EXISTS property_reviews CASCADE;
 
--- tables for users, properties, property_reviews and reservations
+-- tables for users, properties, property_reviews and reservations  names/passwords (s)
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY NOT NULL,
-  name VARCHAR(255) NOT NULL,
+  names VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL
+  passwords VARCHAR(255) NOT NULL
 );
 
 -- description(s)
