@@ -62,7 +62,7 @@ const getUserWithId = function (id) {
 const addUser = function (user) {
   return pool
     .query(
-      `INSERT INTO users (names, email, passwords) VALUES ($1, $2, $3) RETURNING *`,
+      `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *`,
       [user.name, user.email, user.password]
     )
     .then((result) => {
