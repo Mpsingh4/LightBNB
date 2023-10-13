@@ -9,16 +9,7 @@ const pool = new Pool({
   database: 'lightbnb',
 });
 
-// console log test below
-//pool.query(`SELECT title FROM properties LIMIT 10;`).then(response => {console.log(response)})
 
-/// Users
-
-/*
- * Get a single user from the database given their email.
- * @param {String} email The email of the user.
- * @return {Promise<{}>} A promise to the user.
- */
 const getUserWithEmail = function (email) {
   return pool
   .query(`SELECT * FROM users WHERE email = $1`, [email])
@@ -34,17 +25,13 @@ const getUserWithEmail = function (email) {
   });
 };
 
-/*
- * Get a single user from the database given their id.
- * @param {string} id The id of the user.
- * @return {Promise<{}>} A promise to the user.
- */
+
 const getUserWithId = function (id) {
     return pool
       .query(`SELECT * FROM users WHERE id = $1`, [id])
       .then((result) => {
         if (result.rows.length > 0) {
-          return result.rows[0]; // Assuming id is unique, so there should be only one result
+          return result.rows[0]; 
         } else {
           return null;
         }
@@ -54,11 +41,7 @@ const getUserWithId = function (id) {
       });
   };
 
-/*
- * Add a new user to the database.
- * @param {{name: string, password: string, email: string}} user
- * @return {Promise<{}>} A promise to the user.
- */
+
 const addUser = function (user) {
   return pool
     .query(
@@ -73,13 +56,6 @@ const addUser = function (user) {
     });
 };
 
-/// Reservations
-
-/*
- * Get all reservations for a single user.
- * @param {string} guest_id The id of the user.
- * @return {Promise<[{}]>} A promise to the reservations.
- */
 const getAllReservations = (guest_id, limit = 10) => {
   const query = `
   SELECT * 
@@ -96,14 +72,6 @@ const getAllReservations = (guest_id, limit = 10) => {
 };
 
 
-/// Properties
-
-/*
- * Get all properties.
- * @param {{}} options An object containing query options.
- * @param {*} limit The number of results to return.
- * @return {Promise<[{}]>}  A promise to the properties.
- */
 const getAllProperties = function (options, limit = 10) {
   const queryParams = [];
   let queryString = `
@@ -132,14 +100,14 @@ const getAllProperties = function (options, limit = 10) {
     queryParams.push(options.maximum_price_per_night * 100);
     filters.push(`cost_per_night <= $${queryParams.length}`);
   }
+  
+  if (filters.length > 0) {
+    queryString += ' WHERE ' + filters.join(' AND ');
+  }
 
   if (options.minimum_rating) {
     queryParams.push(options.minimum_rating);
-    filters.push(`AVG(property_reviews.rating) >= $${queryParams.length}`);
-  }
-
-  if (filters.length > 0) {
-    queryString += ' WHERE ' + filters.join(' AND ');
+    filters.push(`HAVING AVG(property_reviews.rating) >= $${queryParams.length}`);
   }
 
   queryParams.push(limit);
@@ -154,12 +122,6 @@ const getAllProperties = function (options, limit = 10) {
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
-
-/*
- * Add a property to the database
- * @param {{}} property An object containing all of the property details.
- * @return {Promise<{}>} A promise to the property.
- */
 
 const addProperty = function (property) {
   const queryParams = [
